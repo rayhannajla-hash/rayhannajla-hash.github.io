@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Budhiarso Santosa — Pitch Deck Design &amp; AI Automation</title>
+<meta name="description" content="Investor-grade pitch and sales decks in 24–48 hours, and AI automation systems that run 24/7. Freelance designer and automation developer based in Indonesia, working remote.">
+<meta property="og:title" content="Budhiarso Santosa — Pitch Deck Design &amp; AI Automation">
+<meta property="og:description" content="Investor-grade pitch and sales decks in 24–48 hours. AI automation systems that run 24/7.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+<style>
+  :root{
+    --bg:#FBFAF8; --surface:#FFFFFF; --ink:#16181D; --muted:#5C6069;
+    --line:#E4E0D9; --accent:#B4532A; --accent-soft:#F5E7DF;
+    --radius:14px;
+    --serif: ui-serif, Georgia, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0F1115; --surface:#171A20; --ink:#F1EFEB; --muted:#9BA1AC;
+      --line:#282C34; --accent:#E0855A; --accent-soft:#2A1C15;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0F1115; --surface:#171A20; --ink:#F1EFEB; --muted:#9BA1AC;
+    --line:#282C34; --accent:#E0855A; --accent-soft:#2A1C15;
+  }
+  :root[data-theme="light"]{
+    --bg:#FBFAF8; --surface:#FFFFFF; --ink:#16181D; --muted:#5C6069;
+    --line:#E4E0D9; --accent:#B4532A; --accent-soft:#F5E7DF;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px; margin:0 auto; padding:0 22px}
+  a{color:var(--accent); text-decoration:none}
+  a:hover{text-decoration:underline}
+  h1,h2,h3{font-family:var(--serif); font-weight:600; line-height:1.2; letter-spacing:-.01em; margin:0}
+  section{padding:60px 0; border-top:1px solid var(--line)}
+  .eyebrow{
+    font-family:var(--sans); font-size:12px; font-weight:600; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--accent); margin:0 0 14px
+  }
+
+  /* header */
+  header{padding:22px 0; position:sticky; top:0; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(10px); z-index:10; border-bottom:1px solid var(--line)}
+  .nav{display:flex; align-items:center; justify-content:space-between; gap:16px}
+  .brand{font-family:var(--serif); font-size:17px; font-weight:600; color:var(--ink)}
+  .brand:hover{text-decoration:none}
+  .nav-links{display:flex; gap:20px; font-size:14px}
+  .nav-links a{color:var(--muted)}
+  .nav-links a:hover{color:var(--accent)}
+  @media (max-width:620px){ .nav-links{display:none} }
+
+  /* hero */
+  .hero{padding:74px 0 60px; border-top:none}
+  .hero h1{font-size:clamp(2.1rem, 6vw, 3.2rem); max-width:16ch}
+  .hero .lead{font-size:clamp(1.05rem,2.6vw,1.22rem); color:var(--muted); max-width:56ch; margin:22px 0 0}
+  .cta-row{display:flex; flex-wrap:wrap; gap:12px; margin-top:32px}
+  .btn{
+    display:inline-block; padding:13px 24px; border-radius:999px; font-size:15px;
+    font-weight:600; border:1px solid var(--accent);
+  }
+  .btn:hover{text-decoration:none; opacity:.88}
+  .btn-primary{background:var(--accent); color:var(--bg)}
+  .btn-ghost{color:var(--accent); background:transparent}
+  .signals{display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:34px; font-size:14px; color:var(--muted)}
+  .signals span::before{content:"— "; color:var(--accent)}
+
+  /* cards */
+  .grid{display:grid; gap:18px; margin-top:30px}
+  @media (min-width:720px){ .grid-2{grid-template-columns:1fr 1fr} }
+  .card{
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); padding:26px;
+  }
+  .card h3{font-size:1.28rem; margin-bottom:6px}
+  .card .tagline{color:var(--accent); font-size:13px; font-weight:600; margin:0 0 14px}
+  .card ul{margin:0; padding-left:19px; color:var(--muted); font-size:15.5px}
+  .card li{margin:7px 0}
+  .card li strong{color:var(--ink); font-weight:600}
+
+  /* work */
+  .work{display:grid; gap:20px; margin-top:30px}
+  @media (min-width:720px){ .work{grid-template-columns:1fr 1fr} }
+  .piece{
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); overflow:hidden; display:block; color:inherit;
+  }
+  .piece:hover{text-decoration:none; border-color:var(--accent)}
+  .piece img{width:100%; display:block; aspect-ratio:16/9; object-fit:cover; object-position:top center; background:var(--accent-soft)}
+  .piece .meta{padding:18px 20px}
+  .piece h3{font-size:1.05rem}
+  .piece p{margin:5px 0 0; font-size:14px; color:var(--muted)}
+
+  /* pricing */
+  .table-scroll{overflow-x:auto; margin-top:26px; border:1px solid var(--line); border-radius:var(--radius)}
+  table{border-collapse:collapse; width:100%; min-width:480px; font-size:15px; background:var(--surface)}
+  th,td{padding:13px 18px; text-align:left; border-bottom:1px solid var(--line)}
+  thead th{font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600}
+  tbody tr:last-child td{border-bottom:none}
+  td.tier{font-family:var(--serif); font-size:1.05rem; font-weight:600}
+  td.price{color:var(--accent); font-weight:700; white-space:nowrap}
+  .fineprint{font-size:14px; color:var(--muted); margin-top:14px}
+
+  /* about */
+  .about p{color:var(--muted); max-width:62ch}
+  .about p strong{color:var(--ink); font-weight:600}
+  .about p + p{margin-top:16px}
+
+  /* contact */
+  .contact-list{list-style:none; padding:0; margin:26px 0 0; display:grid; gap:12px}
+  @media (min-width:620px){ .contact-list{grid-template-columns:1fr 1fr} }
+  .contact-list a{
+    display:flex; align-items:baseline; gap:12px; padding:15px 18px;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    color:var(--ink); font-size:15px;
+  }
+  .contact-list a:hover{text-decoration:none; border-color:var(--accent)}
+  .contact-list .k{font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); min-width:74px; flex-shrink:0}
+
+  footer{padding:40px 0 56px; border-top:1px solid var(--line); color:var(--muted); font-size:14px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px}
+  .theme-btn{
+    background:none; border:1px solid var(--line); color:var(--muted); cursor:pointer;
+    border-radius:999px; padding:6px 14px; font:inherit; font-size:13px;
+  }
+  .theme-btn:hover{border-color:var(--accent); color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top">Budhiarso&nbsp;Santosa</a>
+    <nav class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#work">Work</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="top">
+
+  <section class="hero">
+    <p class="eyebrow">Freelance · Remote from Indonesia</p>
+    <h1>Decks that get a yes. Systems that run without you.</h1>
+    <p class="lead">
+      I design investor-grade pitch and sales decks in 24–48 hours, and build AI
+      automation that quietly does the repetitive work — 24 hours a day, no reminders needed.
+    </p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#contact">Start a project</a>
+      <a class="btn btn-ghost" href="#work">See sample decks</a>
+    </div>
+    <div class="signals">
+      <span>24–48h typical turnaround</span>
+      <span>Editable source files included</span>
+      <span>Free 3-slide outline before you commit</span>
+    </div>
+  </section>
+
+  <section id="services">
+    <p class="eyebrow">What I do</p>
+    <h2>Two things, done properly</h2>
+    <div class="grid grid-2">
+
+      <article class="card">
+        <h3>Pitch &amp; Sales Decks</h3>
+        <p class="tagline">Story first, then design</p>
+        <ul>
+          <li><strong>Clear narrative</strong> — Problem → Solution → Why now → Ask. Every slide earns the next one.</li>
+          <li><strong>Custom visuals</strong> — icons, layouts, and data charts built around your content, not a stock template.</li>
+          <li><strong>Your brand</strong> — I build around your logo, colors, and fonts.</li>
+          <li><strong>You own the file</strong> — editable PowerPoint or Google Slides, plus PDF.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>AI &amp; Automation</h3>
+        <p class="tagline">Manual workflow in, running system out</p>
+        <ul>
+          <li><strong>AI agents</strong> — autonomous systems that run on a schedule and recover from their own failures.</li>
+          <li><strong>API integration</strong> — connecting tools that don't talk to each other: Google, Meta, YouTube, and custom endpoints.</li>
+          <li><strong>Content pipelines</strong> — generation through publishing, end to end, with no manual step in the middle.</li>
+          <li><strong>Reporting</strong> — scheduled data pulls that replace manual tracking.</li>
+        </ul>
+      </article>
+
+    </div>
+  </section>
+
+  <section id="work">
+    <p class="eyebrow">Selected work</p>
+    <h2>Sample decks</h2>
+    <p class="fineprint">Concept pieces built to show range across three deck styles — investor, sales, and keynote.</p>
+    <div class="work">
+
+      <a class="piece" href="https://gamma.app/docs/jzk4jidnk8l2zn4" target="_blank" rel="noopener">
+        <img src="img/01_cover_investor.webp" alt="Cover slide of the Lumen AI investor pitch deck" loading="lazy">
+        <div class="meta">
+          <h3>Lumen AI — Investor Pitch</h3>
+          <p>10 slides, light and technical. Full raise structure from problem through the ask.</p>
+        </div>
+      </a>
+
+      <a class="piece" href="https://gamma.app/docs/d43poguncdba9ja" target="_blank" rel="noopener">
+        <img src="img/03_pricing_table.webp" alt="Pricing table slide from the Cobalt B2B sales deck" loading="lazy">
+        <div class="meta">
+          <h3>Cobalt — B2B Sales Deck</h3>
+          <p>Dark navy, premium. Buyer-facing: challenge, solution, benefits, pricing, demo CTA.</p>
+        </div>
+      </a>
+
+      <a class="piece" href="https://gamma.app/docs/vyiyalh6sri8onn" target="_blank" rel="noopener">
+        <img src="img/04_layout_cards.webp" alt="Numbered card layout from the customer churn keynote deck" loading="lazy">
+        <div class="meta">
+          <h3>5 Ways to Cut Customer Churn</h3>
+          <p>Webinar and thought-leadership deck. Colorful, numbered, keynote pacing.</p>
+        </div>
+      </a>
+
+      <a class="piece" href="https://gamma.app/docs/jzk4jidnk8l2zn4" target="_blank" rel="noopener">
+        <img src="img/02_traction_chart.webp" alt="Traction chart slide showing growth data" loading="lazy">
+        <div class="meta">
+          <h3>Data that reads in one glance</h3>
+          <p>Traction and metrics slides designed so investors don't have to squint.</p>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <section id="pricing">
+    <p class="eyebrow">Pricing</p>
+    <h2>Straightforward packages</h2>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Package</th><th>Price</th><th>Slides</th><th>Includes</th><th>Delivery</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tier">Starter</td><td class="price">$60</td><td>up to 8</td>
+            <td>Custom visuals, source file, 1 revision</td><td>3 days</td>
+          </tr>
+          <tr>
+            <td class="tier">Investor</td><td class="price">$120</td><td>up to 15</td>
+            <td>Adds data charts, full brand match, 2 revisions</td><td>2 days</td>
+          </tr>
+          <tr>
+            <td class="tier">Full Brand</td><td class="price">$220</td><td>up to 20</td>
+            <td>Adds speaker notes, custom brand system, 3 revisions</td><td>48h rush</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="fineprint">
+      Automation projects are quoted per scope — tell me the workflow you want gone and I'll price it.
+      No content written yet? Send rough notes or just talk me through the idea; I'll structure the narrative for you.
+    </p>
+  </section>
+
+  <section id="about" class="about">
+    <p class="eyebrow">About</p>
+    <h2>Thirty years of operations, now pointed at software</h2>
+    <p>
+      I'm <strong>Budhiarso Santosa</strong>, based in Cikarang, Indonesia, working remote.
+      I spent roughly three decades running production floors for Japanese
+      manufacturers — <strong>Sanyo</strong> and <strong>Yanmar</strong> among them — where a process that
+      fails at 3 a.m. is a real problem with real consequences.
+    </p>
+    <p>
+      That's the mindset I bring to this work. A deck is a process for moving someone
+      from skeptical to convinced. An automation is a process that has to survive
+      without anyone watching it. Both reward the same thing: clear structure, and a
+      reliability-first habit of asking what happens when it breaks.
+    </p>
+    <p>
+      I'm self-taught on the software side and I build in public — I run
+      <strong>Fakta Psikologi</strong>, an Indonesian psychology channel on YouTube and Instagram,
+      on top of a content pipeline I built and maintain myself. It's the honest version of a
+      portfolio: a system I use every day, not a case study.
+    </p>
+  </section>
+
+  <section id="contact">
+    <p class="eyebrow">Contact</p>
+    <h2>Tell me what you're pitching</h2>
+    <p class="fineprint">
+      Describe the project and I'll reply with how I'd approach it — including a free outline
+      of your first three slides, before you commit to anything.
+    </p>
+    <ul class="contact-list">
+      <li><a href="mailto:budhiarso@hotmail.com"><span class="k">Email</span><span>budhiarso@hotmail.com</span></a></li>
+      <li><a href="https://wa.me/6281295946152" target="_blank" rel="noopener"><span class="k">WhatsApp</span><span>+62 812-9594-6152</span></a></li>
+      <li><a href="https://github.com/rayhannajla-hash" target="_blank" rel="noopener"><span class="k">GitHub</span><span>rayhannajla-hash</span></a></li>
+      <li><a href="https://www.youtube.com/@FaktaPsikologi-e2o" target="_blank" rel="noopener"><span class="k">YouTube</span><span>Fakta Psikologi</span></a></li>
+      <li><a href="https://instagram.com/psikologi.fakta" target="_blank" rel="noopener"><span class="k">Instagram</span><span>@psikologi.fakta</span></a></li>
+    </ul>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <span>© <span id="yr">2026</span> Budhiarso Santosa · Cikarang, Indonesia</span>
+  <button class="theme-btn" id="themeBtn" type="button">Switch theme</button>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  var btn = document.getElementById('themeBtn');
+  var root = document.documentElement;
+  var saved = localStorage.getItem('theme');
+  if (saved) root.setAttribute('data-theme', saved);
+  btn.addEventListener('click', function () {
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var current = root.getAttribute('data-theme') || (prefersDark ? 'dark' : 'light');
+    var next = current === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  });
+</script>
+
+</body>
+</html>
