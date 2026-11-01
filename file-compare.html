@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI File Compare — live demo</title>
+<meta name="description" content="Upload two spreadsheets, let AI match the column headers, then compare every row and export the differences highlighted in red. Runs entirely in your browser.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+<link rel="stylesheet" href="style.css">
+<style>
+  .app{max-width:1180px}
+  .steps{display:flex; gap:8px; flex-wrap:wrap; margin:0 0 28px; padding:0; list-style:none; font-size:13px}
+  .steps li{list-style:none; display:flex; align-items:center; gap:8px; color:var(--muted); padding:7px 13px; border:1px solid var(--line); border-radius:999px; background:var(--surface)}
+  .steps li.on{color:var(--accent); border-color:var(--accent); background:var(--accent-soft)}
+  .steps li.done{color:var(--ink)}
+  .steps li::marker{content:''}
+  .steps b{font-variant-numeric:tabular-nums; opacity:.55}
+
+  .panel{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:22px; margin:0 0 20px}
+  .panel h3{font-size:19px; margin:0 0 4px}
+  .panel .hint{color:var(--muted); font-size:14px; margin:0 0 18px}
+
+  .drops{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px}
+  .drop{border:1.5px dashed var(--line); border-radius:12px; padding:18px; text-align:center; cursor:pointer; transition:.15s; background:var(--bg)}
+  .drop:hover,.drop.over{border-color:var(--accent); background:var(--accent-soft)}
+  .drop.filled{border-style:solid; border-color:var(--accent); background:var(--accent-soft); text-align:left}
+  .drop .role{font-size:11px; letter-spacing:.1em; text-transform:uppercase; font-weight:600; color:var(--accent); margin-bottom:6px}
+  .drop .fname{font-weight:600; font-size:14px; word-break:break-all; line-height:1.4}
+  .drop .meta{font-size:13px; color:var(--muted); margin-top:5px}
+  .drop input{display:none}
+  .drop .ph{font-size:14px; color:var(--muted)}
+
+  .tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(135px,1fr)); gap:12px; margin:18px 0 0}
+  .tile{border:1px solid var(--line); border-radius:11px; padding:13px 15px; background:var(--bg)}
+  .tile .n{font-family:var(--serif); font-size:26px; font-weight:600; line-height:1.1; font-variant-numeric:tabular-nums}
+  .tile .l{font-size:12px; color:var(--muted); margin-top:3px}
+  .tile.bad .n{color:#C0392B}
+  .tile.good .n{color:#1E8449}
+  @media (prefers-color-scheme:dark){ .tile.bad .n{color:#F1948A} .tile.good .n{color:#7DCEA0} }
+  :root[data-theme="dark"] .tile.bad .n{color:#F1948A}
+  :root[data-theme="dark"] .tile.good .n{color:#7DCEA0}
+
+  table.grid{width:100%; border-collapse:collapse; font-size:13.5px}
+  table.grid th,table.grid td{border:1px solid var(--line); padding:7px 10px; text-align:left; vertical-align:top}
+  table.grid th{background:var(--bg); font-weight:600; position:sticky; top:0; z-index:1;
+    font-size:12.5px; text-transform:none; letter-spacing:0; color:var(--ink); white-space:nowrap}
+  .scroll{overflow:auto; max-height:62vh; border:1px solid var(--line); border-radius:11px; margin-top:14px}
+  .scroll table.grid th,.scroll table.grid td{border-left:0; border-top:0}
+  table.grid td:nth-child(2){white-space:nowrap; font-variant-numeric:tabular-nums}
+
+  td.diff{background:#FDECEA; color:#A5281B; font-weight:600}
+  @media (prefers-color-scheme:dark){ td.diff{background:#3A1A16; color:#F5A79B} }
+  :root[data-theme="dark"] td.diff{background:#3A1A16; color:#F5A79B}
+  :root[data-theme="light"] td.diff{background:#FDECEA; color:#A5281B}
+
+  select,input[type=text],input[type=number]{font-family:var(--sans); font-size:13.5px; padding:6px 9px; border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink); max-width:100%}
+  .badge{display:inline-block; font-size:11px; font-weight:600; padding:2px 8px; border-radius:999px; white-space:nowrap}
+  .b-high{background:#E8F6EE; color:#1E6F43} .b-mid{background:#FDF3E3; color:#8A5A12} .b-low{background:#FDECEA; color:#A5281B} .b-none{background:var(--bg); color:var(--muted)}
+  @media (prefers-color-scheme:dark){ .b-high{background:#17331F;color:#8ED3A8} .b-mid{background:#332714;color:#E0B978} .b-low{background:#331B18;color:#F0A69A} }
+  :root[data-theme="dark"] .b-high{background:#17331F;color:#8ED3A8}
+  :root[data-theme="dark"] .b-mid{background:#332714;color:#E0B978}
+  :root[data-theme="dark"] .b-low{background:#331B18;color:#F0A69A}
+
+  .why{font-size:12px; color:var(--muted); line-height:1.45}
+  .keys{display:flex; flex-wrap:wrap; gap:7px; margin-top:10px}
+  .keys label{display:flex; align-items:center; gap:6px; font-size:13px; border:1px solid var(--line); border-radius:8px; padding:5px 10px; cursor:pointer; background:var(--bg)}
+  .keys label.sel{border-color:var(--accent); background:var(--accent-soft); color:var(--accent); font-weight:600}
+  .keys input{accent-color:var(--accent)}
+
+  .opts{display:flex; flex-wrap:wrap; gap:18px; align-items:center; font-size:13.5px; color:var(--muted); margin-top:16px; padding-top:16px; border-top:1px solid var(--line)}
+  .opts label{display:flex; align-items:center; gap:7px}
+  .tabs{display:flex; gap:6px; margin:4px 0 0; flex-wrap:wrap}
+  .tab{font-size:13.5px; padding:8px 15px; border:1px solid var(--line); border-radius:999px; background:var(--surface); color:var(--muted); cursor:pointer; font-family:var(--sans)}
+  .tab.on{border-color:var(--accent); color:var(--accent); background:var(--accent-soft); font-weight:600}
+  .row-actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:18px}
+  .st{font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; white-space:nowrap}
+  .st-mismatch{color:#A5281B} .st-match{color:#1E6F43} .st-missing{color:#8A5A12} .st-only{color:#6B4E9E}
+  .note{font-size:13px; color:var(--muted); background:var(--bg); border-left:2px solid var(--accent); padding:10px 14px; border-radius:0 8px 8px 0; margin-top:16px}
+  .err{border-left-color:#C0392B; color:#A5281B}
+  button[disabled]{opacity:.45; cursor:not-allowed}
+  .hidden{display:none}
+  .pk-out{font-size:13px; color:var(--muted); margin-top:9px}
+  .pk-out code{background:var(--bg); padding:2px 6px; border-radius:5px; font-size:12.5px; border:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="index.html">Budhiarso&nbsp;Santosa</a>
+    <nav class="nav-links">
+      <a href="index.html#automation">Automation</a>
+      <a href="index.html#pricing">Pricing</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap app">
+
+  <section class="hero" style="padding:34px 0 24px">
+    <p class="eyebrow">Live demo · nothing leaves your browser</p>
+    <h1 style="font-size:clamp(30px,5vw,42px)">AI File Compare</h1>
+    <p class="lead">
+      Upload a legacy file and a target file. The tool matches the column headers itself —
+      <em>first_name</em> to <em>First Name</em>, <em>DOB</em> to <em>Date of Birth</em> — then compares
+      every row and gives you the differences, highlighted in red, as an Excel file.
+    </p>
+    <div class="signals">
+      <span>.xlsx · .xls · .csv</span>
+      <span>Composite primary keys</span>
+      <span>Your own mapping sheet, optional</span>
+      <span>No upload — runs on your machine</span>
+    </div>
+  </section>
+
+  <ol class="steps" id="steps">
+    <li class="on" data-s="1"><b>1</b> Upload files</li>
+    <li data-s="2"><b>2</b> Review the mapping</li>
+    <li data-s="3"><b>3</b> Compare &amp; export</li>
+  </ol>
+
+  <!-- ===== step 1 ===== -->
+  <div class="panel" id="p-upload">
+    <h3>Upload</h3>
+    <p class="hint">File A and File B are required. The mapping file is optional — use it if you already have a source-to-target list.</p>
+    <div class="drops">
+      <label class="drop" id="d-a"><input type="file" accept=".xlsx,.xls,.csv" data-k="a">
+        <div class="role">File A — legacy</div><div class="ph">Click or drop a file</div></label>
+      <label class="drop" id="d-b"><input type="file" accept=".xlsx,.xls,.csv" data-k="b">
+        <div class="role">File B — target</div><div class="ph">Click or drop a file</div></label>
+      <label class="drop" id="d-c"><input type="file" accept=".xlsx,.xls,.csv" data-k="c">
+        <div class="role">File C — mapping (optional)</div><div class="ph">Click or drop a file</div></label>
+    </div>
+    <div class="tiles hidden" id="counts"></div>
+    <div class="row-actions">
+      <button class="btn btn-primary" id="go-map" disabled>Match the columns →</button>
+      <button class="btn btn-ghost" id="load-sample">Load sample files</button>
+    </div>
+    <div id="up-msg"></div>
+  </div>
+
+  <!-- ===== step 2 ===== -->
+  <div class="panel hidden" id="p-map">
+    <h3>Column mapping</h3>
+    <p class="hint">Every pairing below was proposed by the matcher and can be changed. The <em>why</em> column shows what the decision was based on.</p>
+    <div id="map-table"></div>
+
+    <div style="margin-top:24px">
+      <h3 style="font-size:16px">Primary key</h3>
+      <p class="hint" style="margin-bottom:0">Rows are paired on this. Defaults to the first column; tick up to four to build a composite key.</p>
+      <div class="keys" id="pk-list"></div>
+      <div class="pk-out" id="pk-out"></div>
+    </div>
+
+    <div class="opts">
+      <label><input type="checkbox" id="o-case" checked> Ignore upper/lower case</label>
+      <label><input type="checkbox" id="o-space" checked> Ignore extra spaces</label>
+      <label>Numeric tolerance <input type="number" id="o-tol" value="0" min="0" step="0.01" style="width:82px"></label>
+      <label>Ambiguous dates are
+        <select id="o-date"><option value="0">month first (03/05 = 5 Mar)</option><option value="1">day first (03/05 = 3 May)</option></select>
+      </label>
+    </div>
+
+    <div class="row-actions">
+      <button class="btn btn-primary" id="go-run">Run the comparison →</button>
+      <button class="btn btn-ghost" id="back-1">← Back to upload</button>
+    </div>
+    <div id="map-msg"></div>
+  </div>
+
+  <!-- ===== step 3 ===== -->
+  <div class="panel hidden" id="p-result">
+    <h3>Result</h3>
+    <div class="tiles" id="r-tiles"></div>
+    <div id="r-msg"></div>
+
+    <div class="row-actions" style="justify-content:space-between">
+      <div class="tabs">
+        <button class="tab on" id="t-all">All rows</button>
+        <button class="tab" id="t-diff">Differences only</button>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap">
+        <input type="text" id="r-find" placeholder="Filter rows…" style="width:180px">
+        <button class="btn btn-primary" id="dl">Download Excel</button>
+      </div>
+    </div>
+
+    <div class="scroll" id="r-table"></div>
+    <div class="row-actions">
+      <button class="btn btn-ghost" id="back-2">← Back to mapping</button>
+    </div>
+  </div>
+
+  <section style="border-top:1px solid var(--line)">
+    <p class="eyebrow">About this demo</p>
+    <h2>How the matching actually works</h2>
+    <div class="grid grid-2">
+      <article class="card">
+        <h3>Two signals, not one</h3>
+        <p class="blurb">Header names are compared on wording, known equivalents (<em>qty</em> = <em>quantity</em>, <em>DOB</em> = <em>date of birth</em>) and spelling distance. Then the column's <strong>contents</strong> are profiled — emails, dates, numbers, value overlap — so a column can be matched even when its name gives nothing away. Pairings are one-to-one and assigned best-first.</p>
+      </article>
+      <article class="card">
+        <h3>Nothing is uploaded</h3>
+        <p class="blurb">Parsing, matching, comparison and the Excel export all happen in this page. Your files never reach a server — which is usually the deciding factor when the data is customer or payroll records. A server-side version with saved jobs and an audit trail is a straightforward extension.</p>
+      </article>
+    </div>
+    <p class="fineprint" style="margin-top:22px">
+      Built by Budhiarso Santosa. <a href="index.html#contact">Get in touch</a> if you want this adapted to your own files and rules.
+    </p>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <span>© <span id="yr">2026</span> Budhiarso Santosa · Cikarang, Indonesia</span>
+  <button class="theme-btn" id="themeBtn" type="button">Switch theme</button>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<script src="fc-engine.js?v=4"></script>
+<script src="fc-samples.js?v=4"></script>
+<script src="fc-app.js?v=4"></script>
+<script src="theme.js"></script>
+</body>
+</html>
